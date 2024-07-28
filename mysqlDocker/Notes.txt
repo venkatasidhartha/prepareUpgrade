@@ -1,0 +1,905 @@
+To see the all Database
+------------------------
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| prepare            |
+| sys                |
++--------------------+
+
+---------------------------------------------------------------------------------------
+
+
+
+To create database
+-------------------
+mysql> create database prepare;
+Query OK, 1 row affected (0.00 sec)
+
+
+------------------------------------------------------------------------------------------
+
+
+To create table 
+----------------
+mysql> CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(255)
+);
+Query OK, 0 rows affected (0.01 sec)
+
+
+---------------------------------------------------------------------------------------
+
+To see the details of the table
+-------------------------------
+mysql> desc customers;
++-------+--------------+------+-----+---------+----------------+
+| Field | Type         | Null | Key | Default | Extra          |
++-------+--------------+------+-----+---------+----------------+
+| id    | int          | NO   | PRI | NULL    | auto_increment |
+| email | varchar(255) | NO   |     | NULL    |                |
+| name  | varchar(255) | NO   |     | NULL    |                |
+| phone | varchar(255) | YES  |     | NULL    |                |
++-------+--------------+------+-----+---------+----------------+
+
+
+---------------------------------------------------------------------------------------------
+
+To insert records in a table
+---------------------------
+mysql> insert into customers (email,name,phone) 
+    -> values ("ses@se.com","ses","+91909090"),("ses@se.com","ses","+91909090");
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+
+-----------------------------------------------------------------------------------------------
+
+To get all the Records in a table 
+---------------------------------
+mysql> select * from customers;
++----+------------+------+-----------+
+| id | email      | name | phone     |
++----+------------+------+-----------+
+|  1 | ses@se.com | ses  | +91909090 |
+|  2 | ses@se.com | ses  | +91909090 |
+|  3 | ses@se.com | ses  | +91909090 |
++----+------------+------+-----------+
+3 rows in set (0.00 sec)
+
+
+---------------------------------------------------------------------------------------------
+
+
+To get a specific Records in table 
+---------------------------------------
+mysql> select * from customers where id=1 and email="ses@se.com";
++----+------------+------+-----------+
+| id | email      | name | phone     |
++----+------------+------+-----------+
+|  1 | ses@se.com | ses  | +91909090 |
++----+------------+------+-----------+
+1 row in set (0.01 sec)
+
+Operators 
+
+The AND operator displays a record if all the conditions separated by AND are TRUE.
+The OR operator displays a record if any of the conditions separated by OR is TRUE.
+The NOT operator displays a record if any of the conditions separated by NOT is FALSE.
+
+Example:
+
+SELECT * FROM Customers
+WHERE Country = 'Germany' AND (City = 'Berlin' OR City = 'Stuttgart');
+
+SELECT * FROM Customers
+WHERE NOT Country = 'Germany' AND NOT Country = 'USA';
+
+
+
+-----------------------------------------------------------------------------------------------
+
+To oreder the records with limit of 5 
+-------------------------------------
+
+Ascending operator
+
+mysql> select id,email from customers order by id asc limit 5;
++----+-----------------------+
+| id | email                 |
++----+-----------------------+
+|  1 | customer1@example.com |
+|  2 | customer2@example.com |
+|  3 | customer3@example.com |
+|  4 | customer4@example.com |
+|  5 | customer5@example.com |
++----+-----------------------+
+
+descending operator
+
+mysql> select id,email from customers order by id desc limit 5;
++----+------------------------+
+| id | email                  |
++----+------------------------+
+| 20 | customer20@example.com |
+| 19 | customer19@example.com |
+| 18 | customer18@example.com |
+| 17 | customer17@example.com |
+| 16 | customer16@example.com |
++----+------------------------+
+
+Example :
+
+mysql> select * from (select id,email from customers order by id desc limit 5) as sub order by id asc;
++----+------------------------+
+| id | email                  |
++----+------------------------+
+| 16 | customer16@example.com |
+| 17 | customer17@example.com |
+| 18 | customer18@example.com |
+| 19 | customer19@example.com |
+| 20 | customer20@example.com |
++----+------------------------+
+
+------------------------------------------------------------------------------------------------------------------
+
+To update the record
+------------------------
+
+mysql> Update customers set email="customer100@example.com" where id=1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+Note: Be careful when updating records. If you omit the WHERE clause, ALL records will be updated!
+
+--------------------------------------------------------------------------------------------------------------------
+
+To delete the record
+---------------------
+
+mysql> delete from customers where id=1;
+Query OK, 1 row affected (0.04 sec)
+
+Note: Be careful when deleting records in a table! Notice the WHERE clause in the DELETE statement.
+The WHERE clause specifies which record(s) should be deleted. 
+If you omit the WHERE clause, all records in the table will be deleted!
+
+---------------------------------------------------------------------------------------------------------------------
+
+Limit opereator
+---------------
+
+select * from customers limit 5; -> it bring the top 5 recoreds 
++----+-----------------------+------------+--------------+
+| id | email                 | name       | phone        |
++----+-----------------------+------------+--------------+
+|  2 | customer2@example.com | Customer 2 | 987-654-3210 |
+|  3 | customer3@example.com | Customer 3 | 555-123-4567 |
+|  4 | customer4@example.com | Customer 4 | 444-555-6666 |
+|  5 | customer5@example.com | Customer 5 | 777-888-9999 |
+|  6 | customer6@example.com | Customer 6 | 222-333-4444 |
++----+-----------------------+------------+--------------+
+
+select * from customers limit 5 offset 5; -> returns the next 5 records like pagination
+ +----+------------------------+-------------+--------------+
+| id | email                  | name        | phone        |
++----+------------------------+-------------+--------------+
+|  7 | customer7@example.com  | Customer 7  | 555-666-7777 |
+|  8 | customer8@example.com  | Customer 8  | 888-999-0000 |
+|  9 | customer9@example.com  | Customer 9  | 333-444-5555 |
+| 10 | customer10@example.com | Customer 10 | 666-777-8888 |
+| 11 | customer11@example.com | Customer 11 | 999-000-1111 |
++----+------------------------+-------------+--------------+
+
+----------------------------------------------------------------------------------------------------
+
+MAX, MIN operator
+-----------------
+
+MAX 
+----
+select MAX(id) from customers; this will return the higest value in the coulmn 
++---------+
+| MAX(id) |
++---------+
+|      20 |
++---------+
+
+select MAX(email) from customers;
+
+the above query behavior will be bit different because the varchar datatype coulmn
+will work in `lexicographic` order 
+
+MIN
+----
+select MIN(id) from customers; this will return the lowest value in the coulmn 
++---------+
+| MIN(id) |
++---------+
+|       2 |
++---------+
+
+------------------------------------------------------------------------------
+
+COUNT, AVG, SUM operator
+-------------------------
+
+COUNT
+-------
+
+select count(*) from customers; -> will return the number of rows in the table
++----------+
+| count(*) |
++----------+
+|       19 |
++----------+
+
+select count(*) from customers where id=7; -> will return the number of rows in the table using where condition
++----------+
+| count(*) |
++----------+
+|        1 |
++----------+
+
+AVG
+----
+
+select AVG(id) from customers where id=3; -> to find the avarage value of the number column 
++---------+
+| AVG(id) |
++---------+
+|  3.0000 |
++---------+
+
+Note : AVG operator wont work of varchar column
+
+SUM 
+----
+
+select SUM(id) from customers where id=3; -> to find the sum of the value in a number column 
++---------+
+| SUM(id) |
++---------+
+|       3 |
++---------+
+
+Note : SUM operator wont work of varchar column
+
+-----------------------------------------------------------------------------------------------------------------
+
+LIKE operator 
+---------------
+
+WHERE CustomerName LIKE 'a%'	Finds any values that start with "a"
+WHERE CustomerName LIKE '%a'	Finds any values that end with "a"
+WHERE CustomerName LIKE '%or%'	Finds any values that have "or" in any position
+WHERE CustomerName LIKE '_r%'	Finds any values that have "r" in the second position
+WHERE CustomerName LIKE 'a_%'	Finds any values that start with "a" and are at least 2 characters in length
+WHERE CustomerName LIKE 'a__%'	Finds any values that start with "a" and are at least 3 characters in length
+WHERE ContactName LIKE 'a%o'	Finds any values that start with "a" and ends with "o"
+
+
+select * from customers where email LIKE '%9%'; -> this query will return the value from the table which are similar to the patten
++----+------------------------+-------------+--------------+
+| id | email                  | name        | phone        |
++----+------------------------+-------------+--------------+
+|  9 | customer9@example.com  | Customer 9  | 333-444-5555 |
+| 19 | customer19@example.com | Customer 19 | 999-000-1111 |
++----+------------------------+-------------+--------------+
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+In operator
+----------
+
+select * from customers where id in (1,2,4); 
++----+-----------------------+------------+--------------+
+| id | email                 | name       | phone        |
++----+-----------------------+------------+--------------+
+|  2 | customer2@example.com | Customer 2 | 987-654-3210 |
+|  4 | customer4@example.com | Customer 4 | 444-555-6666 |
++----+-----------------------+------------+--------------+
+
+the above query will return the value which are exest in the table and avoid not it the table (dont through any error)
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Between operator
+----------------
+
+Example 1: 
+select * from customers where id Between 1 and 10;
++----+------------------------+-------------+--------------+
+| id | email                  | name        | phone        |
++----+------------------------+-------------+--------------+
+|  2 | customer2@example.com  | Customer 2  | 987-654-3210 |
+|  3 | customer3@example.com  | Customer 3  | 555-123-4567 |
+|  4 | customer4@example.com  | Customer 4  | 444-555-6666 |
+|  5 | customer5@example.com  | Customer 5  | 777-888-9999 |
+|  6 | customer6@example.com  | Customer 6  | 222-333-4444 |
+|  7 | customer7@example.com  | Customer 7  | 555-666-7777 |
+|  8 | customer8@example.com  | Customer 8  | 888-999-0000 |
+|  9 | customer9@example.com  | Customer 9  | 333-444-5555 |
+| 10 | customer10@example.com | Customer 10 | 666-777-8888 |
++----+------------------------+-------------+--------------+
+
+the above query is returning values in between the range  
+
+Example 2: 
+
+select * from customers where email Between "customer2@example.com" and "customer9@example.com ";
+
++----+------------------------+-------------+--------------+
+| id | email                  | name        | phone        |
++----+------------------------+-------------+--------------+
+|  2 | customer2@example.com  | Customer 2  | 987-654-3210 |
+|  3 | customer3@example.com  | Customer 3  | 555-123-4567 |
+|  4 | customer4@example.com  | Customer 4  | 444-555-6666 |
+|  5 | customer5@example.com  | Customer 5  | 777-888-9999 |
+|  6 | customer6@example.com  | Customer 6  | 222-333-4444 |
+|  7 | customer7@example.com  | Customer 7  | 555-666-7777 |
+|  8 | customer8@example.com  | Customer 8  | 888-999-0000 |
+|  9 | customer9@example.com  | Customer 9  | 333-444-5555 |
+| 20 | customer20@example.com | Customer 20 | 444-555-6666 |
++----+------------------------+-------------+--------------+
+
+in email (varchar) column the behavier is different 
+
+The BETWEEN operator compares the email values based on their lexicographic order. It starts by comparing the first character of each email. Since "customer2@example.com" and "customer9@example.com" have the same first character "c", it moves to the next character.
+
+The second character of "customer2@example.com" is "u", while the second character of "customer9@example.com" is "a". Since "u" comes after "a" in the lexicographic order, the comparison stops and "customer2@example.com" is considered greater than "customer9@example.com".
+
+As a result, the query returns all records starting from "customer2@example.com" and ending at "customer20@example.com" in the lexicographic order.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Aliases
+-------
+
+this function used to keep alias name to table or a output.
+
+select cust.email from customers as cust limit 3;
++-----------------------+
+| email                 |
++-----------------------+
+| customer2@example.com |
+| customer3@example.com |
+| customer4@example.com |
++-----------------------+
+
+----------------------------------------------------------------------------------------
+
+Inner join
+-----------
+
+Returns records that have matching values in both tables
+
+select ord.product_name,cust.id from orders as ord 
+inner join customers as cust on ord.customer_id = cust.id limit 5; 
+
++--------------+----+
+| product_name | id |
++--------------+----+
+| Product 2    |  2 |
+| Product 3    |  3 |
+| Product 4    |  4 |
+| Product 5    |  5 |
+| Product 6    |  6 |
++--------------+----+
+
+the above query will return the value which are mached on the both tables 
+
+--------------------------------------------------------------------------------------
+
+LEFT Join
+
+Returns all records from the left table, and the matched records from the right table
+
+select ord.product_name,cust.id from orders as ord 
+left join customers as cust on ord.customer_id = cust.id limit 5; 
++--------------+------+
+| product_name | id   |
++--------------+------+
+| Product 1    | NULL |
+| Product 2    |    2 |
+| Product 3    |    3 |
+| Product 4    |    4 |
+| Product 5    |    5 |
++--------------+------+
+
+the above query will return the value of all records in left table only the matched records from the 
+right table. the unmached records will be NULL Value
+
+------------------------------------------------------------------------------------------------------
+
+RIGHT Join
+-----------
+
+Returns all records from the right table, and the matched records from the left table
+
+
+select ord.product_name,cust.id from orders as ord 
+right join customers as cust on ord.customer_id = cust.id limit 5; 
++--------------+----+
+| product_name | id |
++--------------+----+
+| Product 21   |  2 |
+| Product 2    |  2 |
+| Product 22   |  3 |
+| Product 3    |  3 |
+| Product 23   |  4 |
++--------------+----+
+
+the above query will return the value of all records in right table only the matched records from the 
+left table. the unmached records will be NULL Value
+
+-----------------------------------------------------------------------------------------------------
+
+CROSS JOIN (Full join) 
+
+Returns all records from both tables
+
+select ord.product_name,cust.id from orders as ord 
+cross join customers as cust limit 15; 
+
++--------------+----+
+| product_name | id |
++--------------+----+
+| Product 1    | 20 |
+| Product 1    | 19 |
+| Product 1    | 18 |
+| Product 1    | 17 |
+| Product 1    | 16 |
+| Product 1    | 15 |
+| Product 1    | 14 |
+| Product 1    | 13 |
+| Product 1    | 12 |
+| Product 1    | 11 |
+| Product 1    | 10 |
+| Product 1    |  9 |
+| Product 1    |  8 |
+| Product 1    |  7 |
+| Product 1    |  6 |
++--------------+----+
+
+it will also retun duplicate record like for each record in left table it will return the maching 
+value of the right table as in above output
+
+---------------------------------------------------------------------------------------------------
+
+Self Join
+
+A self join is a regular join, but the table is joined with itself.
+
+SELECT column_name(s)
+FROM table1 T1, table1 T2
+WHERE condition;
+
+
+----------------------------------------------------------------------------------------------------
+
+UNION Operator
+--------------
+
+UNION Syntax
+
+The UNION operator is used to combine the result-set of two or more SELECT statements.
+
+Rule
+1. Every SELECT statement within UNION must have the same number of columns
+2. The columns must also have similar data types
+3. The columns in every SELECT statement must also be in the same order
+
+SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2;
+
+Example
+
+select id, email from customers 
+UNION
+select id, product_name from orders;
+
++----+------------------------+
+| id | email                  |
++----+------------------------+
+|  2 | customer2@example.com  |
+|  3 | customer3@example.com  |
+|  4 | customer4@example.com  |
+|  5 | customer5@example.com  |
+|  6 | customer6@example.com  |
+|  7 | customer7@example.com  |
+|  8 | customer8@example.com  |
+|  9 | customer9@example.com  |
+| 10 | customer10@example.com |
+| 11 | customer11@example.com |
+| 12 | customer12@example.com |
+| 13 | customer13@example.com |
+| 14 | customer14@example.com |
+| 15 | customer15@example.com |
+| 16 | customer16@example.com |
+| 17 | customer17@example.com |
+| 18 | customer18@example.com |
+| 19 | customer19@example.com |
+| 20 | customer20@example.com |
+|  1 | Product 1              |
+|  2 | Product 2              |
+|  3 | Product 3              |
+|  4 | Product 4              |
+|  5 | Product 5              |
+|  6 | Product 6              |
+|  7 | Product 7              |
+|  8 | Product 8              |
+|  9 | Product 9              |
+| 10 | Product 10             |
+| 11 | Product 11             |
+| 12 | Product 12             |
+| 13 | Product 13             |
+| 14 | Product 14             |
+| 15 | Product 15             |
+| 16 | Product 16             |
+| 17 | Product 17             |
+| 18 | Product 18             |
+| 19 | Product 19             |
+| 20 | Product 20             |
+| 21 | Product 21             |
+| 22 | Product 22             |
+| 23 | Product 23             |
+| 24 | Product 24             |
+| 25 | Product 25             |
+| 26 | Product 26             |
+| 27 | Product 27             |
+| 28 | Product 28             |
+| 29 | Product 29             |
+| 30 | Product 30             |
+| 31 | Product 31             |
+| 32 | Product 32             |
+| 33 | Product 33             |
+| 34 | Product 34             |
+| 35 | Product 35             |
+| 36 | Product 36             |
+| 37 | Product 37             |
+| 38 | Product 38             |
+| 39 | Product 39             |
+| 40 | Product 40             |
++----+------------------------+
+
+the above query will retun all the data in both select querys 
+
+
+UNION ALL Syntax
+The UNION operator selects only distinct values by default. To allow duplicate values, use UNION ALL
+
+Note: Distinct values are all different items in a list, including unique values and the first occurrences of duplicate values.
+
+SELECT column_name(s) FROM table1
+UNION ALL
+SELECT column_name(s) FROM table2;
+
+Example
+
+select id, email from customers 
+UNION ALL
+select id, product_name from orders;
+
++----+------------------------+
+| id | email                  |
++----+------------------------+
+|  2 | customer2@example.com  |
+|  3 | customer3@example.com  |
+|  4 | customer4@example.com  |
+|  5 | customer5@example.com  |
+|  6 | customer6@example.com  |
+|  7 | customer7@example.com  |
+|  8 | customer8@example.com  |
+|  9 | customer9@example.com  |
+| 10 | customer10@example.com |
+| 11 | customer11@example.com |
+| 12 | customer12@example.com |
+| 13 | customer13@example.com |
+| 14 | customer14@example.com |
+| 15 | customer15@example.com |
+| 16 | customer16@example.com |
+| 17 | customer17@example.com |
+| 18 | customer18@example.com |
+| 19 | customer19@example.com |
+| 20 | customer20@example.com |
+|  1 | Product 1              |
+|  2 | Product 2              |
+|  3 | Product 3              |
+|  4 | Product 4              |
+|  5 | Product 5              |
+|  6 | Product 6              |
+|  7 | Product 7              |
+|  8 | Product 8              |
+|  9 | Product 9              |
+| 10 | Product 10             |
+| 11 | Product 11             |
+| 12 | Product 12             |
+| 13 | Product 13             |
+| 14 | Product 14             |
+| 15 | Product 15             |
+| 16 | Product 16             |
+| 17 | Product 17             |
+| 18 | Product 18             |
+| 19 | Product 19             |
+| 20 | Product 20             |
+| 21 | Product 21             |
+| 22 | Product 22             |
+| 23 | Product 23             |
+| 24 | Product 24             |
+| 25 | Product 25             |
+| 26 | Product 26             |
+| 27 | Product 27             |
+| 28 | Product 28             |
+| 29 | Product 29             |
+| 30 | Product 30             |
+| 31 | Product 31             |
+| 32 | Product 32             |
+| 33 | Product 33             |
+| 34 | Product 34             |
+| 35 | Product 35             |
+| 36 | Product 36             |
+| 37 | Product 37             |
+| 38 | Product 38             |
+| 39 | Product 39             |
+| 40 | Product 40             |
++----+------------------------+
+
+the above query will retun Distinct values from the both select querys and 
+Note: Distinct values are all different items in a list, including unique values and the first occurrences of duplicate values.
+
+
+------------------------------------------------------------------------------------------------
+
+GROUP BY
+--------
+
+The GROUP BY statement groups rows that have the same values into summary rows, like "find the number of customers in each country".
+
+The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) to group the result-set by one or more columns.
+
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+ORDER BY column_name(s);
+
+Example
+
+select count(*) from orders group by customer_id;
+
++----------+
+| count(*) |
++----------+
+|        1 |
+|        2 |
+|        2 |
+|        2 |
+|        2 |
+|        2 |
+|        3 |
+|        2 |
+|        2 |
+|        2 |
+|        1 |
+|        4 |
+|        2 |
+|        2 |
+|        2 |
+|        2 |
+|        2 |
+|        1 |
+|        2 |
+|        2 |
++----------+
+
+counts each customer have orders how many items
+
+-------------------------------------------------------------------------------------------------------
+
+HAVING Clause
+--------------
+The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions.
+
+Syntax
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+HAVING condition
+ORDER BY column_name(s);
+
+
+select count(customer_id) from orders group by customer_id having count(customer_id)>1 limit 3;
++--------------------+
+| count(customer_id) |
++--------------------+
+|                  2 |
+|                  2 |
+|                  2 |
++--------------------+
+
+get who are customer ordered more then 1 item
+
+-----------------------------------------------------------------------------------------------------
+
+EXISTS Operator
+----------------
+The EXISTS operator is used to test for the existence of any record in a subquery.
+The EXISTS operator returns TRUE if the subquery returns one or more records.
+
+Syntax
+SELECT column_name(s)
+FROM table_name
+WHERE EXISTS
+(SELECT column_name FROM table_name WHERE condition);
+-----------------------------------------------------------------------------------------------------
+
+Arithmetic Operators
+--------------------
+
+Operator	Description	
+-------------------------
++	        Add	
+-	        Subtract	
+*	        Multiply	
+/	        Divide	
+%	        Modulo
+
+Bitwise Operators
+-----------------
+
+Operator	Description	
+&	        Bitwise AND
+|	        Bitwise OR
+^	        Bitwise exclusive OR
+
+Comparison Operators
+--------------------
+
+Operator	Description
+--------------------------
+=	        Equal to	
+>	        Greater than	
+<	        Less than	
+>=	        Greater than or equal to	
+<=	        Less than or equal to	
+<>	        Not equal to
+
+Compound Operators
+------------------
+
+Operator	Description
+------------------------
++=	        Add equals
+-=	        Subtract equals
+*=	        Multiply equals
+/=	        Divide equals
+%=	        Modulo equals
+&=	        Bitwise AND equals
+^-=	        Bitwise exclusive equals
+|*=	        Bitwise OR equals
+
+Logical Operators
+--------------------
+
+Operator	Description
+------------------------
+ALL	        TRUE if all of the subquery values meet the condition	
+AND	        TRUE if all the conditions separated by AND is TRUE	
+ANY	        TRUE if any of the subquery values meet the condition	
+BETWEEN	    TRUE if the operand is within the range of comparisons	
+EXISTS	    TRUE if the subquery returns one or more records	
+IN	        TRUE if the operand is equal to one of a list of expressions	
+LIKE	    TRUE if the operand matches a pattern	
+NOT	        Displays a record if the condition(s) is NOT TRUE	
+OR	        TRUE if any of the conditions separated by OR is TRUE	
+SOME	    TRUE if any of the subquery values meet the condition
+
+-----------------------------------------------------------------------------------------------------------
+CREATE DATABASE
+---------------
+
+Syntax
+CREATE DATABASE databasename;
+
+------------------------------------------------------------------------------------------------------------
+DROP DATABASE
+---------------
+
+Syntax
+DROP DATABASE databasename;
+
+-------------------------------------------------------------------------------------------------------------
+DROP TABLE
+----------
+
+Syntax
+DROP TABLE table_name;
+
+-------------------------------------------------------------------------------------------------------------
+ALTER TABLE
+------------
+
+ADD Column
+ALTER TABLE Customers
+ADD Email varchar(255);
+
+DROP COLUMN
+ALTER TABLE table_name
+DROP COLUMN column_name;
+
+MODIFY COLUMN
+ALTER TABLE table_name
+MODIFY COLUMN column_name datatype;
+
+------------------------------------------------------------------------------------------------------------
+UNIQUE
+-----
+
+Syntax
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    UNIQUE (ID)
+);
+
+ALTER TABLE Persons
+ADD UNIQUE (ID);
+
+ALTER TABLE Persons
+DROP INDEX UC_Person;
+
+---------------------------------------------------------------------------------------------------
+PRIMARY KEY
+-----------
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+ALTER TABLE Persons
+ADD PRIMARY KEY (ID);
+
+-----------------------------------------------------------------------------------------------------------
+FOREIGN KEY
+-----------
+
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+);
+
+ALTER TABLE Orders
+ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+-------------------------------------------------------------------------------------------------------
+CREATE INDEX
+------------
+
+indexes are used to retrieve data from the database more quickly than otherwise. The users cannot see the indexes, they are just used to speed up searches/queries.
+
+
+
+CREATE INDEX index_name
+ON table_name (column1, column2, ...);
+
