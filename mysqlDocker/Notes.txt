@@ -903,3 +903,42 @@ indexes are used to retrieve data from the database more quickly than otherwise.
 CREATE INDEX index_name
 ON table_name (column1, column2, ...);
 
+---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+Backup the DATABASE
+---------------------
+
+Syntax
+mysqldump -u [username] -p [database_name] > [backup_file.sql]
+Options for Enhanced Backups:
+
+--single-transaction: Ensures a consistent backup without locking tables.
+--routines: Includes stored procedures and functions.
+--triggers: Includes triggers.
+--events: Includes events.
+
+
+mysqldump -p prepare  > prepare.sql
+
+---------------------------------------------------------------------------------------------
+
+Restore DATABASE
+-----------------
+Syntax
+mysql -u [username] -p [database_name] < [backup_file.sql]
+
+
+create database prepare; -> create the database 
+mysql -p prepare < prepare.sql -> execute the restore cmd
+
+
+---------------------------------------------------------------------------------------------
+
+Mysql interview questions my preparation
+----------------------------------------------
+How do you design a database schema in MySQL?
+What are some common MySQL queries you use?
+How do you optimize MySQL queries?
+How do you handle transactions in MySQL?
+How do you back up and restore a MySQL database?

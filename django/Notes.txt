@@ -1,0 +1,473 @@
+To create Table
+----------------
+
+from django.db import models
+
+# Create your models here.
+class Customer(models.Model):
+    name = models.CharField(max_length=200, null=False, blank=False)
+    phone = models.CharField(max_length=200, null=False, blank=False)
+    email = models.CharField(max_length=200, null=False, blank=False)
+    date_created = models.DateTimeField(auto_now_add=True, null=False,blank=False)
+
+    def __str__(self):
+        return self.name    
+    
+class Orders(models.Model):
+    product = models.CharField(max_length=200, null=False, blank=False)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False, blank=False)
+    date_created = models.DateTimeField(auto_now_add=True, null=False,blank=False)
+
+    def __str__(self):
+        return self.customer
+
+---------------------------------------------------------------------------------------------------
+
+Creating Objects
+----------------
+
+to create a single entity
+--------------------------
+cust = Customer.objects.create(name="sidhu",phone="1234567895",email="email1@example.com")
+cust.save()
+
+to create a bulk entity
+------------------------
+
+def generate_customers():
+    customers = []
+    for i in range(20):
+        name = f"Customer {i+1}"
+        phone = f"123456789{i+1}"
+        email = f"email{i+1}@example.com"
+        customers.append(Customer(name=name, phone=phone, email=email))
+    Customer.objects.bulk_create(customers)
+    
+---------------------------------------------------------------------------------
+
+Retrieving Objects
+------------------
+
+All objects:
+--------------
+
+cust = Customer.objects.all()
+<QuerySet [<Customer: sidhu>, <Customer: Customer 1>, 
+<Customer: Customer 2>, <Customer: Customer 3>, <Customer: Customer 4>, 
+<Customer: Customer 5>, <Customer: Customer 6>, <Customer: Customer 7>,
+<Customer: Customer 18>, <Customer: Customer 19>, 
+  '...(remaining elements truncated)...']>
+
+the above query will return in all records in list 
+
+Filter objects:
+----------------
+
+cust = Customer.objects.filter(email="email10@example.com")
+<QuerySet [<Customer: Customer 10>]>
+
+the above query will return filtered data from the table in list 
+
+Get a single object:
+---------------------
+cust = Customer.objects.get(email="email10@example.com")
+<Customer: Customer 10>
+
+the above query will return a specific record in object format  
+
+Exclude objects:
+-----------------
+cust = Customer.objects.exclude(email="email10@example.com")
+<QuerySet [<Customer: sidhu>, <Customer: Customer 1>, <Customer: Customer 2>,
+ <Customer: Customer 9>, <Customer: Customer 11>, <Customer: Customer 12>,
+  <Customer: Customer 13>, <Customer: Customer 14>, <Customer: Customer 15>,
+   ]>
+
+the above query will exclude the mentioned data and gives the reminding data in list
+format
+
+
+values and values_list objects
+-------------------------------
+
+values objects
+---------------
+to get only the specific columns 
+
+cust = Customer.objects.values("email")
+cust = Customer.objects.values("email").filter(name="sidhu") -> with where condation 
+
+the output will be in dict format
+
+values_list objects (output is tuple format)
+----------------------------------------
+
+to get only the specific columns in tuple format
+
+cust = Customer.objects.values_list("email","name")
+
+<QuerySet [('email1@example.com', 'sidhu'), ('email1@example.com', 'Customer 1'), ('email2@example.com', 'Customer 2'),
+ ('email3@example.com', 'Customer 3'), ('email4@example.com', 'Customer 4'), ('email5@example.com', 'Customer 5'),
+  ('email6@example.com', 'Customer 6')]>
+
+the output will be in tuple format
+
+values_list objects (output is list format)
+--------------------------------
+
+to get only one specific columns in list format
+
+cust = Customer.objects.values_list("email",flat=True)
+
+['email1@example.com', 'email1@example.com', 'email2@example.com', 'email3@example.com',
+ 'email4@example.com', 'email5@example.com', 'email6@example.com', 'email7@example.com',]
+
+this query will return in list of values it works for onlu one column 
+
+
+distinct object
+---------------
+
+to remove the duplicates of the record in table 
+
+exaple
+cust = Customer.objects.all().distinct()
+
+
+--------------------------------------------------------------------------------------------------
+
+Field Lookups
+-------------
+
+
+contains	        
+---------
+Contains the phrase
+cust = Customer.objects.filter(name__contains="s")
+
+to get the values which have this values (case-sensetive)
+
+
+icontains	        
+---------
+Same as contains, but case-insensitive
+cust = Customer.objects.filter(name__icontains="s")
+
+to get the values which have this values (case-insensetive)
+
+
+date	            
+-------
+cust = Customer.objects.filter(date_created__date="2024-01-29")
+
+Matches a date
+
+
+day	                
+----
+cust = Customer.objects.values("date_created__day")
+
+Matches a date (day of month, 1-31) (for dates)
+
+endswith	        
+---------
+cust = Customer.objects.filter(name__endswith="hu")
+
+Ends with
+
+
+iendswith	 
+---------       
+
+cust = Customer.objects.filter(name__iendswith="hu")
+
+Same as endswidth, but case-insensitive
+
+exact	            
+------
+cust = Customer.objects.filter(name__exact="hu")
+
+An exact match records
+
+iexact
+------
+cust = Customer.objects.filter(name__iexact="hu")
+
+Same as exact, but case-insensitive
+
+
+in	                
+---
+cust = Customer.objects.filter(name__in=["sidhu","customer"])
+
+Matches one of the values
+
+isnull	  
+-------
+cust = Customer.objects.filter(name__isnull=True)
+
+Matches NULL values
+
+gt	                
+---
+cust = Customer.objects.filter(id__gt=3)
+
+books_after_2000 = Book.objects.filter(published_date__gt='2000-01-01')
+
+Greater than value
+
+gte	                
+---
+cust = Customer.objects.filter(id__gte=3)
+
+Greater than, or equal to
+
+hour	            
+-----
+Matches an hour (for datetimes)
+
+lt	                
+---
+cust = Customer.objects.filter(id__lt=3)
+
+Less than
+
+lte	                
+-----
+cust = Customer.objects.filter(id__lte=3)
+
+Less than, or equal to
+
+
+minute	            
+----------
+Matches a minute (for datetimes)
+
+month	            
+------
+Matches a month (for dates)
+
+quarter	            
+-------
+Matches a quarter of the year (1-4) (for dates)
+
+range	            
+-------
+cust = Customer.objects.filter(id__range=(1,5))
+
+cust = Customer.objects.filter(date_created__range=("2024-01-01","2024-07-31"))
+
+Match between range
+
+startswith	        
+-----------
+cust = Customer.objects.filter(name__startswith="si")
+
+Starts with
+
+istartswith	        
+------------
+cust = Customer.objects.filter(name__istartswith="si")
+
+Same as startswith, but case-insensitive
+
+regex	            Matches a regular expression
+iregex	            Same as regex, but case-insensitive
+second	            Matches a second (for datetimes)
+time	            Matches a time (for datetimes)
+week	            Matches a week number (1-53) (for dates)
+week_day	        Matches a day of week (1-7) 1 is Sunday
+iso_week_day	    Matches a ISO 8601 day of week (1-7) 1 is Monday
+year	            Matches a year (for dates)
+iso_year	        Matches an ISO 8601 year (for dates)
+--------------------------------------------------------------------------------------------------------------
+
+Aggregations
+
+Perform calculations over a set of values.
+
+from django.db.models import Avg, Count, Min, Max, Sum
+
+Count
+------
+cust = Customer.objects.aggregate(Count('id'))
+>>> cust
+{'id__count': 21}
+
+Avg
+-----
+cust = Customer.objects.aggregate(Avg('id'))
+>>> cust
+{'id__avg': 11.0}
+
+Min 
+----
+cust = Customer.objects.aggregate(Min('id'))
+cust
+{'id__min': 1}
+
+Max 
+---
+cust = Customer.objects.aggregate(Max('id'))
+>>> cust
+{'id__max': 21}
+
+Sum
+---
+cust = Customer.objects.aggregate(Sum('id'))
+>>> cust
+{'id__sum': 231}
+
+--------------------------------------------------------------------------------------------------------------------
+
+Annotations
+------------
+from django.db.models import Avg, Count, Min, Max, Sum
+
+ord = Orders.objects.annotate(customer__count=Count("customer__id"))
+
+
+Grouping using Annotations
+----------------------------
+ord = Orders.objects.values("customer").annotate(product_count=Count("product"))
+
+<QuerySet [{'customer': 1, 'product_count': 50}, {'customer': 2, 'product_count': 50}, 
+{'customer': 3, 'product_count': 50}, {'customer': 4, 'product_count': 50}, {'customer': 5, 'product_count': 50}, 
+{'customer': 6, 'product_count': 50}, {'customer': 7, 'product_count': 50}, {'customer': 8, 'product_count': 50}, 
+{'customer': 9, 'product_count': 50}, {'customer': 10, 'product_count': 50}, {'customer': 11, 'product_count': 50}, 
+{'customer': 12, 'product_count': 50}, {'customer': 13, 'product_count': 50}, {'customer': 14, 'product_count': 50}, 
+{'customer': 15, 'product_count': 50}, {'customer': 16, 'product_count': 50}, {'customer': 17, 'product_count': 50}, 
+{'customer': 18, 'product_count': 50}, {'customer': 19, 'product_count': 50}, {'customer': 20, 'product_count': 50}]>
+
+------------------------------------------------------------------------------------------------------------------------
+
+Ordering
+---------
+
+ord = Orders.objects.values("product","customer__id").order_by('customer__id') # Ascending order
+ord = Orders.objects.values("product","customer__id").order_by('-customer__id') # Descending order
+
+we can order the records in Ascending and (-) Descending order 
+look the above query
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Relationships in models
+------------------------
+
+Many-to-many relationships
+-----------------------------
+
+A many-to-many relationship in Django allows multiple instances of one model to be associated 
+with multiple instances of another model. Django handles this by creating an intermediary table to manage 
+the relationships.
+
+
+Example: Books and Authors
+
+from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    authors = models.ManyToManyField(Author)
+
+
+Explanition
+
+Let's consider a simple example of books and authors. A book can have multiple authors, 
+and an author can write multiple books.
+
+
+
+Many-to-one relationships (ForeignKey)
+---------------------------------------
+
+A many-to-one relationship in Django means that multiple instances of one model can be associated 
+with a single instance of another model. This is achieved using the ForeignKey field.
+
+
+Example: Blog Posts and Authors
+
+from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+Explanition
+
+Let's consider a blog where multiple blog posts can be written by a single author, 
+but an author can write multiple blog posts.
+
+
+
+
+One-to-one relationships
+--------------------------
+
+A one-to-one relationship in Django means that one instance of a model is related to exactly one instance of another model. 
+Think of it as an extension of an existing model.
+
+Example: Person and UserProfile
+
+from django.db import models
+
+class Person(models.Model):
+    name = models.CharField(max_length=100)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(Person, on_delete=models.CASCADE, primary_key=True)
+    bio = models.TextField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+
+Explanition
+
+Let's consider a Person model and a UserProfile model. A person can have only one profile, and 
+a profile belongs to only one person.
+
+----------------------------------------------------------------------------------------------------------------------
+
+Transactions
+-------------
+
+Ensure that a series of operations are completed successfully.
+if anything whent wrong there query will roll back
+
+example
+
+from django.db import transaction
+
+with transaction.atomic():
+    author = Author(name='New Author', age=30)
+    author.save()
+    book = Book(title='New Book', author=author, published_date='2023-01-01', price=15.99)
+    book.save()
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+ Indexes
+ ---------
+Define indexes to improve query performance.
+
+example
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    published_date = models.DateField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['-published_date']), # descending order
+        ]
+
