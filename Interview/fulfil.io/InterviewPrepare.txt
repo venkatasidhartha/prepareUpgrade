@@ -1,0 +1,168 @@
+Django ORM:
+    How does Django ORM handle database migrations?
+    
+    django handle migrations by tracking all the changes in the django models like create,changing,and deleting the model
+    when user execute makemigrations cmd which will create a migration folder inside the apps and also create a file with versioning number 000init.py initial file
+    the migrate cmd will apply those changes in the database which will reflect in the tables
+    this tracking or vesioning helps user to rollback the migration to a specific version 
+    
+    Can you explain how to use Django’s select_related and prefetch_related to optimize database queries?
+
+    select_related -> performs INNER JOIN query to the related table for example ForeignKey to customer 
+    this query can only used in ForeignKey relationships
+    Joining Operation happens in SQL
+    example:
+        SELECT "app_orders"."id", "app_orders"."product", "app_orders"."customer_id", "app_orders"."date_created", 
+        "app_customer"."id", "app_customer"."name", "app_customer"."phone", "app_customer"."email", "app_customer"."date_created" 
+        FROM "app_orders" INNER JOIN "app_customer" ON ("app_orders"."customer_id" = "app_customer"."id")
+    
+    prefetch_related -> performs 2 different queries 
+                        1. first query will bring all the respected data from the related table from ForeignKey or ManyToMany etc
+                        2. second query will perform INNER JOIN query to the related table with WHERE Condition IN query operation to match record between parent and child table
+                        3. Joining operation happening with Python Not on SQL  
+
+    
+    How would you handle complex queries in Django ORM that require custom SQL?
+
+SQL:
+    How do you ensure that your SQL queries are secure from SQL injection attacks?
+    1. Use Django’s ORM: It abstracts SQL queries and automatically handles escaping.
+    2. Avoid Raw SQL: Prefer Django ORM methods whenever possible.
+    3. Use Parameterized Queries: When using raw SQL, always use parameterized queries to separate SQL code from user data.
+    4. Sanitize and Validate Input: Always validate and sanitize user input.
+    5. Use Query Expressions: Utilize Django’s query expressions and annotations for dynamic queries.
+    6. Avoid Direct User Input in Raw Queries: Use placeholders for user inputs in raw SQL.
+
+
+    
+    Can you write a query to find the second highest salary from a table?
+    
+    How would you approach normalizing a database schema?
+
+Microservices:
+    How do you design a microservices architecture for a large-scale application?
+    What are some challenges you’ve faced when working with microservices, and how did you overcome them?
+    Can you explain how to handle inter-service communication in a microservice architecture?
+    How do you manage data consistency in a distributed system of microservices?
+
+Server-Side Applications:
+    What are some key considerations when developing a large server-side application in Python?
+    How do you handle logging and monitoring in a large-scale server-side application?
+    How do you ensure high availability and fault tolerance in your server-side applications?
+
+
+Celery:
+    How do you use Celery for task scheduling in a distributed system?
+    Can you explain how you handle task retries and error handling in Celery?
+
+Redis:
+    How do you use Redis as a caching mechanism in your applications?
+    Can you discuss the trade-offs between using Redis and other caching solutions?
+
+RabbitMQ:
+    How do you implement message queuing with RabbitMQ in your applications?
+    What are some best practices for scaling RabbitMQ in a production environment?
+
+High-Quality Code:
+    How do you ensure that your code meets high-quality standards?
+    What is your approach to code reviews, and how do you handle feedback?
+
+
+
+
+
+
+Task 1: Aggregation and Annotation
+Scenario:
+    You have a Sales model that records sales transactions. Each Sale is linked to a Product, and the Product model has a price field. 
+    You need to generate a report that shows each product along with the total sales amount for that product and the number of sales.
+
+    Tasks:
+        1. Write a query to annotate each product with the total sales amount and the number of sales for that product.
+        2. Sort the results by total sales amount in descending order.
+
+    answer
+        from app.models import Product, Sale
+        from django.db.models import Sum,Count
+        Sale.objects.values("product").annotate(total_sales_amount=Sum("product__price"),total_sales=Count("product__id")).order_by("total_sales")
+
+        correct query
+
+        Product.objects.annotate(total_sales_amount=Sum('sales__amount'),total_sales=Count('sales')).order_by('-total_sales_amount')
+
+Task 2: Filtering and Conditional Aggregates
+Scenario:
+    You have a Customer model and an Order model. Each Order is linked to a Customer, and the Order model has a status field. 
+    You want to find customers who have placed more than 5 orders with the status 'completed' and calculate the total amount spent by these customers.
+
+    Tasks:
+        1. Write a query to find customers who have placed more than 5 'completed' orders.
+        2. For these customers, annotate each customer with the total amount they have spent on 'completed' orders.
+
+    answer
+        from app.models import Customer, Order
+        from django.db.models import Sum,Count
+        Order.objects.filter(status="Completed").values("customer").annotate(totalcustomer=Count("customer"),totalamount=Sum("amount")).filter(totalcustomer__gt=5)
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+Questions Related to Fulfil.IO's Products:
+    
+    Order Management:
+        How would you design a service to handle order processing and fulfillment in a high-traffic e-commerce platform?
+        How would you ensure data consistency in a distributed system where multiple services interact with order data?
+
+    Inventory Management:
+        What approach would you take to build a real-time inventory tracking system that syncs across multiple warehouses?
+        How would you implement an alert system for low inventory levels that triggers reordering automatically?
+
+    Warehouse Management:
+        Describe how you would optimize a database schema to efficiently handle warehouse operations like picking, packing, and shipping.
+        How would you implement a feature that tracks the location of items within a warehouse in real-time?
+
+    Financial Management:
+        Discuss how you would design a system to handle financial transactions, ensuring accuracy and traceability for audit purposes.
+        What strategies would you use to manage different currencies and exchange rates in financial reports?
+    
+    Manufacturing and Production:
+        How would you design a microservice that tracks the production status of goods, from raw materials to finished products?
+        What methods would you use to integrate production data with inventory and order management systems?
+
+
+
+Coding Test Questions:
+
+    Data Structures and Algorithms:
+        Implement a system that finds and returns the top n selling products from a dataset of transactions.
+        Write an algorithm to optimize the route for picking items in a warehouse based on the shortest path.
+
+    API Design:
+        Design a RESTful API for managing orders in an e-commerce platform. What endpoints would you include, and how would 
+        you handle authentication and authorization?
+
+        Create an API that integrates with a third-party shipping service to calculate shipping costs and track shipments.
+
+    Database Design:
+        Design a relational database schema for an order management system that supports multiple sales channels (online, 
+        retail, wholesale).
+
+        How would you optimize database queries for a large dataset to ensure fast response times in an inventory management system?
+
+    System Design:
+        Design a scalable system architecture for processing large volumes of real-time financial transactions.
+        How would you ensure high availability and fault tolerance in a microservices architecture for a warehouse management system?
+
+
+General Coding Problem:
+    Concurrency:
+        Implement a system where multiple users can place orders simultaneously. How would you handle race conditions and 
+        ensure data consistency?
+
+
+
+
+
+
+
+

@@ -1,0 +1,147 @@
+
+What was the most difficult problem you've had to overcome? How did you do it?
+The Difficult Problems I Have Solved and How:
+
+1. Internal Server Communication and Data Loss Prevention
+    Problem:
+        Data loss due to various factors and error tracking issues in internal server communication.
+    
+    Requirements:
+        The SDK should run on a single worker (or single thread).
+        Errors should be captured and notified.
+        Easy tracking and reproduction of data if any external issues occur.
+        Easy to import and write code on top of it.
+        Easy access and tracking of data where it is sent.
+
+    Solution:
+        Developed an SDK for Frappe that connects to RabbitMQ to transfer data.
+        The SDK connects to RabbitMQ and consumes messages using routing and exchange concepts.
+        It captures data that has been produced and consumed for backups.
+        If any error occurs while producing or consuming messages, the SDK captures the error and notifies the developer/manager.
+        The SDK allows developers to write code easily without worrying about capturing exceptions.
+        99.9% of data can be reproduced from the source.
+    
+    What Was Solved:
+        1. Data loss.
+        2. Error tracking.
+        3. Developer-friendly implementation.
+
+    For more details, check out my Linkedin post where i posed the solution:  https://www.linkedin.com/pulse/eda-app-frappe-framework-using-rabbitmq-amazonmq-venkata-sidhartha-k/?trackingId=B9%2B%2BAIQNMQwovRTeeHfLMg%3D%3D
+
+    This SDK is currently used in production in my organization, and I received approval from my manager to open-source it.
+
+2. Distributed File Processing and Custom Framework
+    Problem:
+        Implementing a custom framework to process files in parallel and store them efficiently.
+
+    Requirements:
+        Custom framework similar to Frappe or Django CLI to perform file processing locally and integrate with a web app.
+        File processing should be parallel (async method).
+        Processed files should be stored in S3.
+        S3 links should be stored in MySQL and Redis cache to reduce database queries.
+        Users should be notified if file processing fails.
+
+    Solution:
+        Developed a custom framework using Click, Flask, and Multiprocessing.
+        Click module for developing a custom CLI.
+        Flask module for developing web apps and REST APIs.
+        Multiprocessing for parallel file processing.
+        Sqlalchemy for database actions
+
+        Steps:
+            1. Designed a high-level system overview.
+            2. Implemented the CLI tool using the Click module.
+                a. The CLI allows users to extract or process files and run a web app locally.
+            3. Implemented the web app using Flask, providing REST APIs.
+                File upload and processing API:
+                    1. The file is uploaded to an endpoint, its SHA index is found, and it is stored on the server.
+                    2. Multiprocessing converts the file into subtasks for parallel execution.
+                    3. Once processed, the file is uploaded to an S3 bucket, and the response is stored in a database and Redis cache using the file's SHA index.
+                    4. Errors during processing are logged and notified.
+                
+                If the user re-uploads the same file, the data is fetched from Redis or MySQL instead of reprocessing.
+
+    What Was Solved:
+        1. Easy software installation on the local system with a one-line command.
+        2. Reduced file processing time.
+        3. Parallel processing of multiple files.
+        4. Reduced response time and database querying by using Redis cache.
+        5. Avoided GIL (Global Interpreter Lock) issues.
+
+    For more details, check out the example which i have builded for sample: https://github.com/venkatasidhartha/vervoe-flask-app
+
+
+3. Master Data Manipulation by Users
+    Problem:
+        Centralizing master data and ensuring efficient and secure data access through REST APIs.
+
+    Requirements:
+        Master data should be centralized.
+        Need REST APIs for communication.
+        REST APIs should have filtering and sorting options.
+        The API should be usable on different servers (fetching data).
+        Data segregation: Server-1 should only get Server-1-related data, and Server-2 should only get Server-2-related data, even though the tables are the same.
+        Data fetching should be fast.
+
+    Solution:
+        Developed a Django app to maintain all required tables and data.
+        Added a "show_web" field to each table to segregate data at the server level.
+        Used Django REST APIs and Django ORM to fetch data from the server.
+        Reduced database query time by implementing a Redis cache system on each API.
+        Designed an Excel upload API to insert or update data in the respective tables.
+        Used Many-to-Many and ForeignKey relationships in Django models to create a hierarchical table structure, connecting related tables.
+        Containerized the application for easy deployment.
+
+    What Was Solved:
+        1. Master data is unique across all servers.
+        2. Easy to maintain and change data all at once.
+        3. Reduced human errors.
+        4. Easy deployment.
+
+4. JSON Validator
+    Problem:
+        Existing JSON validators lacked certain functionalities, so I developed a unique solution.
+
+    Solution:
+        JSONEyeX is a Python package that provides an easy-to-use and robust solution for validating JSON data against a predefined schema.
+        It handles various data types and structures, including nested JSON objects, ensuring data adheres to the specified format and types.
+
+    Features:
+        1. Validates standard JSON data types, including strings, numbers, objects, and lists.
+        2. Supports custom validation for nested JSON structures.
+        3. Provides clear and descriptive error messages for quick debugging, even for complex JSON structures.
+        4. Easy integration into existing Python projects.
+
+    Ideal for:
+        Data validation in web APIs.
+        Ensuring data integrity in data processing pipelines.
+        Rapid development in scenarios where JSON data structures are extensively used.
+
+    For more details, check out my python module :  https://pypi.org/project/JSONEyeX/
+
+
+What are you most proud of? Why?
+    I'm most proud of developing a custom framework for distributed file processing at my 
+    current organization. The project was challenging, requiring parallel processing, data integrity,
+    and performance optimization for a large-scale system. I led the design and implementation, 
+    integrating S3, MySQL, and Redis to handle files asynchronously and efficiently. The result was a 
+    significant reduction in processing time and a more streamlined workflow for the team. This achievement
+    not only solved a critical issue but also highlighted my ability to tackle complex challenges and 
+    deliver impactful solutions.
+
+What about Fulfil do you find interesting?
+    What I find most interesting about Fulfil is how it uses technology to streamline the supply chain 
+    process. I’m impressed by the focus on creating efficient, data-driven solutions, which aligns with 
+    my experience in developing scalable software systems. I also appreciate Fulfil's commitment to 
+    customer satisfaction and continuous improvement, values that are important to me as well. I'm 
+    excited about the opportunity to be part of a company that’s leading innovation in its field while 
+    prioritizing both technology and customer experience.
+
+What's one thing you've worked on that you think would be particularly relevant here at Fulfil? Why?
+    One project that I think would be relevant at Fulfil is a custom framework I developed for distributed file 
+    processing. It was designed to efficiently handle large-scale data operations using parallel processing and 
+    cloud services like S3 and Redis. Since Fulfil focuses on optimizing supply chain processes with technology, 
+    my experience in building scalable, high-performance systems could be a great fit. This project improved my 
+    technical skills and taught me how to manage complex data workflows, which I believe could add value to Fulfil’s 
+    operations.
+
